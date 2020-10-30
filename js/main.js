@@ -16,12 +16,12 @@ const PIN_SIZE = {
 };
 const PIN_TEMPLATE = document.querySelector(`#pin`).content.querySelector(`button`);
 const PIN_IMG_TEMPLATE = PIN_TEMPLATE.querySelector(`img`).cloneNode();
-let pinNum = 8;
+const PIN_NUM = 8;
 let fieldWidth = MAP.offsetWidth;
 let mapPins = document.querySelector(`.map__pins`);
 
 let getRandomNum = function (min, max) {
-  return (Math.floor(Math.random() * max) + min)
+  return (Math.floor(Math.random() * max) + min);
 };
 
 let getRandomElNum = function (array) {
@@ -34,18 +34,20 @@ let getRandomElOfArr = function (array, multiple) {
     let end = getRandomNum(start, array.length);
     return array.slice(start, end);
   } else {
-  return array[getRandomElNum(array)];
+    return array[getRandomElNum(array)];
   }
-}
+};
 
 let getAdObj = function () {
+  let locationX = getRandomNum(0, fieldWidth);
+  let locationY = getRandomNum(LOCATION_Y.MIN, LOCATION_Y.MAX);
   let newAdObj = {
     author: {
-        avatar: `img/avatars/user0${getRandomNum(1,8)}.png`,
+      avatar: `img/avatars/user0${getRandomNum(1, 8)}.png`,
     },
     offer: {
       title: `Объявление - ${getRandomNum(123, 999)}`,
-      address: `600, 350`,
+      address: `${locationX}, ${locationY}`,
       price: getRandomNum(10, 90000),
       type: getRandomElOfArr(HOUSING_TYPES),
       rooms: getRandomNum(1, 100),
@@ -57,16 +59,16 @@ let getAdObj = function () {
       photos: getRandomElOfArr(PHOTOS, true)
     },
     location: {
-        x: getRandomNum(0, fieldWidth),
-        y: getRandomNum(LOCATION_Y.MIN, LOCATION_Y.MAX)
+      x: locationX,
+      y: locationY
     }
-}
-return newAdObj
-}
+  };
+  return newAdObj;
+};
 
 let getAdsArr = function () {
   let newArr = [];
-  for (let i = 0; i < pinNum; i++) {
+  for (let i = 0; i < PIN_NUM; i++) {
     newArr[i] = getAdObj();
   }
   return newArr;
