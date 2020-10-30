@@ -21,11 +21,11 @@ let fieldWidth = MAP.offsetWidth;
 let mapPins = document.querySelector(`.map__pins`);
 
 let getRandomNum = function (min, max) {
-  return (Math.floor(Math.random() * max) + min);
+  return Math.floor(Math.random() * max) + min;
 };
 
 let getRandomElNum = function (array) {
-  return (getRandomNum(0, array.length - 1));
+  return getRandomNum(0, array.length - 1);
 };
 
 let getRandomElOfArr = function (array, multiple) {
