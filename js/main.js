@@ -2,7 +2,13 @@
 
 
 const MAP = document.querySelector(`.map`);
-const HOUSING_TYPES = [`palace`, `flat`, `house`, `bungalow`];
+const MAP_FILTERS_CONTAINER = document.querySelector(`.map__filters-container`);
+const HOUSING_TYPES = {
+  palace: `Дворец`,
+  flat: `Квартира`,
+  house: `Дом`,
+  bungalow: `Бунгало`
+};
 const CHECK_IN_OUT_TIMES = [`12:00`, `13:00`, `14:00`];
 const FEATURES = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
 const PHOTOS = [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`, `http://o0.github.io/assets/images/tokyo/hotel2.jpg`, `http://o0.github.io/assets/images/tokyo/hotel3.jpg`];
@@ -17,6 +23,7 @@ const PIN_SIZE = {
 const PIN_TEMPLATE = document.querySelector(`#pin`).content.querySelector(`button`);
 const PIN_IMG_TEMPLATE = PIN_TEMPLATE.querySelector(`img`).cloneNode();
 const PIN_NUM = 8;
+const CARD_TEMPLATE = document.querySelector(`#card`).content.querySelector(`article`);
 let fieldWidth = MAP.offsetWidth;
 let mapPins = document.querySelector(`.map__pins`);
 
@@ -49,7 +56,7 @@ let getAdObj = function () {
       title: `Объявление - ${getRandomNum(123, 999)}`,
       address: `${locationX}, ${locationY}`,
       price: getRandomNum(10, 90000),
-      type: getRandomElOfArr(HOUSING_TYPES),
+      type: getRandomElOfArr(Object.keys(HOUSING_TYPES)),
       rooms: getRandomNum(1, 100),
       guests: getRandomNum(1, 100),
       checkin: getRandomElOfArr(CHECK_IN_OUT_TIMES),
@@ -97,3 +104,56 @@ let renderPins = function () {
 };
 
 mapPins.appendChild(renderPins());
+
+let renderCardFeature = function (feature) {
+  let popupFeature = CARD_TEMPLATE.querySelector(`.popup__feature`);
+  let newPopupFeature = popupFeature.cloneNode();
+  newPopupFeature.classList.remove(`popup__feature--wifi`);
+  newPopupFeature.classList.add(`popup__feature--${feature}`);
+  return newPopupFeature;
+};
+
+let renderPhoto = function (photo) {
+  let popupPhoto = CARD_TEMPLATE.querySelector(`.popup__photo`);
+  let newPopupPhoto = popupPhoto.cloneNode();
+  newPopupPhoto.src = photo;
+  return newPopupPhoto;
+};
+
+let renderElements = function (featuresArr, functionName) {
+  let fragment = document.createDocumentFragment();
+  for (let featureEl of featuresArr) {
+    fragment.appendChild(functionName(featureEl));
+  }
+  return fragment;
+};
+
+let renderCard = function (arrEl) {
+
+  let newCard = CARD_TEMPLATE.cloneNode(true);
+  let popupAvatar = newCard.querySelector(`.popup__avatar`);
+  popupAvatar.src = arrEl.author.avatar;
+  let popupTitle = newCard.querySelector(`.popup__title`);
+  popupTitle.textContent = arrEl.offer.title;
+  let popupAddress = newCard.querySelector(`.popup__text--address`);
+  popupAddress.textContent = arrEl.offer.address;
+  let popupPrice = newCard.querySelector(`.popup__text--price`);
+  popupPrice.textContent = `${arrEl.offer.price}₽/ночь`;
+  let popupType = newCard.querySelector(`.popup__type`);
+  popupType.textContent = HOUSING_TYPES[arrEl.offer.type];
+  let popupCapacity = newCard.querySelector(`.popup__text--capacity`);
+  popupCapacity.textContent = `${arrEl.offer.rooms} комнаты для ${arrEl.offer.guests} гостей`;
+  let popupTime = newCard.querySelector(`.popup__text--time`);
+  popupTime.textContent = `Заезд после ${arrEl.offer.checkin}, выезд до ${arrEl.offer.checkout}`;
+  let popupFeatures = newCard.querySelector(`.popup__features`);
+  popupFeatures.textContent = ``;
+  popupFeatures.appendChild(renderElements(arrEl.offer.features, renderCardFeature));
+  let popupDescription = newCard.querySelector(`.popup__description`);
+  popupDescription.textContent = arrEl.offer.description;
+  let popupPhotos = newCard.querySelector(`.popup__photos`);
+  popupPhotos.textContent = ``;
+  popupPhotos.appendChild(renderElements(arrEl.offer.photos, renderPhoto));
+  return newCard;
+};
+
+MAP.insertBefore(renderCard(adsArr[0]), MAP_FILTERS_CONTAINER);
