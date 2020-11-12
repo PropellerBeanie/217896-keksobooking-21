@@ -3,6 +3,13 @@
 
 const MAP = document.querySelector(`.map`);
 const MAP_FILTERS_CONTAINER = document.querySelector(`.map__filters-container`);
+const MAP_FILTERS = MAP_FILTERS_CONTAINER.querySelector(`.map__filters`);
+const MAP_PIN_MAIN = document.querySelector(`.map__pin--main`);
+const AD_FORM = document.querySelector(`.ad-form`);
+const AD_FORM_FIELDSETS = AD_FORM.querySelectorAll(`fieldset`);
+const AD_FORM_ADDRESS = AD_FORM.querySelector(`#address`);
+const AD_FORM_ROOMS = AD_FORM.querySelector(`#room_number`);
+const AD_FORM_GUESTS = AD_FORM.querySelector(`#capacity`);
 const HOUSING_TYPES = {
   palace: `Дворец`,
   flat: `Квартира`,
@@ -58,7 +65,7 @@ let getAdObj = function () {
       price: getRandomNum(10, 90000),
       type: getRandomElOfArr(Object.keys(HOUSING_TYPES)),
       rooms: getRandomNum(1, 100),
-      guests: getRandomNum(1, 100),
+      guests: getRandomNum(0, 3),
       checkin: getRandomElOfArr(CHECK_IN_OUT_TIMES),
       checkout: getRandomElOfArr(CHECK_IN_OUT_TIMES),
       features: getRandomElOfArr(FEATURES, true),
@@ -83,8 +90,6 @@ let getAdsArr = function () {
 
 let adsArr = getAdsArr();
 
-MAP.classList.remove(`map--faded`);
-
 let renderPin = function (arrEl) {
   let newPin = PIN_TEMPLATE.cloneNode();
   let newPinImg = PIN_IMG_TEMPLATE.cloneNode();
@@ -103,7 +108,6 @@ let renderPins = function () {
   return fragment;
 };
 
-mapPins.appendChild(renderPins());
 
 let renderCardFeature = function (feature) {
   let popupFeature = CARD_TEMPLATE.querySelector(`.popup__feature`);
@@ -156,4 +160,72 @@ let renderCard = function (arrEl) {
   return newCard;
 };
 
-MAP.insertBefore(renderCard(adsArr[0]), MAP_FILTERS_CONTAINER);
+// inactive
+
+for (let adFieldset of AD_FORM_FIELDSETS) {
+  adFieldset.disabled = true;
+}
+MAP_FILTERS.disabled = true;
+AD_FORM_ADDRESS.value = `${fieldWidth / 2}, ${LOCATION_Y.MIN + (LOCATION_Y.MAX - LOCATION_Y.MIN) / 2}`;
+
+
+let activatePage = function () {
+  mapPins.appendChild(renderPins());
+  MAP.classList.remove(`map--faded`);
+  AD_FORM.classList.remove(`ad-form--disabled`);
+  for (let adFieldset of AD_FORM_FIELDSETS) {
+    adFieldset.removeAttribute(`disabled`);
+  }
+  MAP_FILTERS.removeAttribute(`disabled`);
+};
+
+let fillAdAddress = function () {
+  AD_FORM_ADDRESS.value = `${MAP_PIN_MAIN.offsetLeft + PIN_SIZE.X}, ${MAP_PIN_MAIN.offsetTop + PIN_SIZE.Y}`;
+};
+
+MAP_PIN_MAIN.addEventListener(`mousedown`, function (evt) {
+  if (evt.button === 0) {
+    activatePage();
+    fillAdAddress();
+  }
+});
+
+MAP_PIN_MAIN.addEventListener(`keydown`, function (evt) {
+  if (evt.keyCode === 13) {
+    activatePage();
+  }
+});
+
+AD_FORM_ROOMS.addEventListener(`change`, function () {
+  let roomsValue = parseInt(AD_FORM_ROOMS.value, 10);
+  let guestsValue = parseInt(AD_FORM_GUESTS.value, 10);
+  if (roomsValue === 1 && guestsValue !== 1) {
+    AD_FORM_GUESTS.setCustomValidity(`В одной комнате может быть только 1 гость`);
+  } else if (roomsValue === 2 && (guestsValue < 1 || guestsValue > 2)) {
+    AD_FORM_GUESTS.setCustomValidity(`2 комнаты - от 1 до 2 гостей`);
+  } else if (roomsValue === 3 && (guestsValue < 1 || guestsValue > 3)) {
+    AD_FORM_GUESTS.setCustomValidity(`3 комнаты - 3 гостя`);
+  } else if (roomsValue === 100 && guestsValue !== 0) {
+    AD_FORM_GUESTS.setCustomValidity(`В cта комнатах не может быть гостей`);
+  } else {
+    AD_FORM_GUESTS.setCustomValidity(``);
+  }
+  AD_FORM_GUESTS.reportValidity();
+});
+
+AD_FORM_GUESTS.addEventListener(`change`, function () {
+  let roomsValue = parseInt(AD_FORM_ROOMS.value, 10);
+  let guestsValue = parseInt(AD_FORM_GUESTS.value, 10);
+  if (guestsValue === 1 && roomsValue > 3) {
+    AD_FORM_ROOMS.setCustomValidity(`1 гость - не больше 3 комнат`);
+  } else if (guestsValue === 2 && (roomsValue < 2 || roomsValue > 3)) {
+    AD_FORM_ROOMS.setCustomValidity(`2 гостя - 2-3 комнаты`);
+  } else if (guestsValue === 3 && roomsValue !== 3) {
+    AD_FORM_ROOMS.setCustomValidity(`Для 3 гостей может быть только 3 комнаты`);
+  } else if (guestsValue === 0 && roomsValue !== 100) {
+    AD_FORM_ROOMS.setCustomValidity(`Без гостей может быть только 100 комнат`);
+  } else {
+    AD_FORM_ROOMS.setCustomValidity(``);
+  }
+  AD_FORM_ROOMS.reportValidity();
+});
