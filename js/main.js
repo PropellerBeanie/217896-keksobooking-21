@@ -30,7 +30,7 @@ const PIN_SIZE = {
 const PIN_TEMPLATE = document.querySelector(`#pin`).content.querySelector(`button`);
 const PIN_IMG_TEMPLATE = PIN_TEMPLATE.querySelector(`img`).cloneNode();
 const PIN_NUM = 8;
-const CARD_TEMPLATE = document.querySelector(`#card`).content.querySelector(`article`);
+// const CARD_TEMPLATE = document.querySelector(`#card`).content.querySelector(`article`);
 let fieldWidth = MAP.offsetWidth;
 let mapPins = document.querySelector(`.map__pins`);
 
@@ -109,56 +109,56 @@ let renderPins = function () {
 };
 
 
-let renderCardFeature = function (feature) {
-  let popupFeature = CARD_TEMPLATE.querySelector(`.popup__feature`);
-  let newPopupFeature = popupFeature.cloneNode();
-  newPopupFeature.classList.remove(`popup__feature--wifi`);
-  newPopupFeature.classList.add(`popup__feature--${feature}`);
-  return newPopupFeature;
-};
+// let renderCardFeature = function (feature) {
+//   let popupFeature = CARD_TEMPLATE.querySelector(`.popup__feature`);
+//   let newPopupFeature = popupFeature.cloneNode();
+//   newPopupFeature.classList.remove(`popup__feature--wifi`);
+//   newPopupFeature.classList.add(`popup__feature--${feature}`);
+//   return newPopupFeature;
+// };
 
-let renderPhoto = function (photo) {
-  let popupPhoto = CARD_TEMPLATE.querySelector(`.popup__photo`);
-  let newPopupPhoto = popupPhoto.cloneNode();
-  newPopupPhoto.src = photo;
-  return newPopupPhoto;
-};
+// let renderPhoto = function (photo) {
+//   let popupPhoto = CARD_TEMPLATE.querySelector(`.popup__photo`);
+//   let newPopupPhoto = popupPhoto.cloneNode();
+//   newPopupPhoto.src = photo;
+//   return newPopupPhoto;
+// };
 
-let renderElements = function (featuresArr, functionName) {
-  let fragment = document.createDocumentFragment();
-  for (let featureEl of featuresArr) {
-    fragment.appendChild(functionName(featureEl));
-  }
-  return fragment;
-};
+// let renderElements = function (featuresArr, functionName) {
+//   let fragment = document.createDocumentFragment();
+//   for (let featureEl of featuresArr) {
+//     fragment.appendChild(functionName(featureEl));
+//   }
+//   return fragment;
+// };
 
-let renderCard = function (arrEl) {
+// let renderCard = function (arrEl) {
 
-  let newCard = CARD_TEMPLATE.cloneNode(true);
-  let popupAvatar = newCard.querySelector(`.popup__avatar`);
-  popupAvatar.src = arrEl.author.avatar;
-  let popupTitle = newCard.querySelector(`.popup__title`);
-  popupTitle.textContent = arrEl.offer.title;
-  let popupAddress = newCard.querySelector(`.popup__text--address`);
-  popupAddress.textContent = arrEl.offer.address;
-  let popupPrice = newCard.querySelector(`.popup__text--price`);
-  popupPrice.textContent = `${arrEl.offer.price}₽/ночь`;
-  let popupType = newCard.querySelector(`.popup__type`);
-  popupType.textContent = HOUSING_TYPES[arrEl.offer.type];
-  let popupCapacity = newCard.querySelector(`.popup__text--capacity`);
-  popupCapacity.textContent = `${arrEl.offer.rooms} комнаты для ${arrEl.offer.guests} гостей`;
-  let popupTime = newCard.querySelector(`.popup__text--time`);
-  popupTime.textContent = `Заезд после ${arrEl.offer.checkin}, выезд до ${arrEl.offer.checkout}`;
-  let popupFeatures = newCard.querySelector(`.popup__features`);
-  popupFeatures.textContent = ``;
-  popupFeatures.appendChild(renderElements(arrEl.offer.features, renderCardFeature));
-  let popupDescription = newCard.querySelector(`.popup__description`);
-  popupDescription.textContent = arrEl.offer.description;
-  let popupPhotos = newCard.querySelector(`.popup__photos`);
-  popupPhotos.textContent = ``;
-  popupPhotos.appendChild(renderElements(arrEl.offer.photos, renderPhoto));
-  return newCard;
-};
+//   let newCard = CARD_TEMPLATE.cloneNode(true);
+//   let popupAvatar = newCard.querySelector(`.popup__avatar`);
+//   popupAvatar.src = arrEl.author.avatar;
+//   let popupTitle = newCard.querySelector(`.popup__title`);
+//   popupTitle.textContent = arrEl.offer.title;
+//   let popupAddress = newCard.querySelector(`.popup__text--address`);
+//   popupAddress.textContent = arrEl.offer.address;
+//   let popupPrice = newCard.querySelector(`.popup__text--price`);
+//   popupPrice.textContent = `${arrEl.offer.price}₽/ночь`;
+//   let popupType = newCard.querySelector(`.popup__type`);
+//   popupType.textContent = HOUSING_TYPES[arrEl.offer.type];
+//   let popupCapacity = newCard.querySelector(`.popup__text--capacity`);
+//   popupCapacity.textContent = `${arrEl.offer.rooms} комнаты для ${arrEl.offer.guests} гостей`;
+//   let popupTime = newCard.querySelector(`.popup__text--time`);
+//   popupTime.textContent = `Заезд после ${arrEl.offer.checkin}, выезд до ${arrEl.offer.checkout}`;
+//   let popupFeatures = newCard.querySelector(`.popup__features`);
+//   popupFeatures.textContent = ``;
+//   popupFeatures.appendChild(renderElements(arrEl.offer.features, renderCardFeature));
+//   let popupDescription = newCard.querySelector(`.popup__description`);
+//   popupDescription.textContent = arrEl.offer.description;
+//   let popupPhotos = newCard.querySelector(`.popup__photos`);
+//   popupPhotos.textContent = ``;
+//   popupPhotos.appendChild(renderElements(arrEl.offer.photos, renderPhoto));
+//   return newCard;
+// };
 
 // inactive
 
@@ -196,7 +196,7 @@ MAP_PIN_MAIN.addEventListener(`keydown`, function (evt) {
   }
 });
 
-AD_FORM_ROOMS.addEventListener(`change`, function () {
+let roomsGuestsHandler = function () {
   let roomsValue = parseInt(AD_FORM_ROOMS.value, 10);
   let guestsValue = parseInt(AD_FORM_GUESTS.value, 10);
   if (roomsValue === 1 && guestsValue !== 1) {
@@ -211,21 +211,12 @@ AD_FORM_ROOMS.addEventListener(`change`, function () {
     AD_FORM_GUESTS.setCustomValidity(``);
   }
   AD_FORM_GUESTS.reportValidity();
+};
+
+AD_FORM_ROOMS.addEventListener(`change`, function () {
+  roomsGuestsHandler();
 });
 
 AD_FORM_GUESTS.addEventListener(`change`, function () {
-  let roomsValue = parseInt(AD_FORM_ROOMS.value, 10);
-  let guestsValue = parseInt(AD_FORM_GUESTS.value, 10);
-  if (guestsValue === 1 && roomsValue > 3) {
-    AD_FORM_ROOMS.setCustomValidity(`1 гость - не больше 3 комнат`);
-  } else if (guestsValue === 2 && (roomsValue < 2 || roomsValue > 3)) {
-    AD_FORM_ROOMS.setCustomValidity(`2 гостя - 2-3 комнаты`);
-  } else if (guestsValue === 3 && roomsValue !== 3) {
-    AD_FORM_ROOMS.setCustomValidity(`Для 3 гостей может быть только 3 комнаты`);
-  } else if (guestsValue === 0 && roomsValue !== 100) {
-    AD_FORM_ROOMS.setCustomValidity(`Без гостей может быть только 100 комнат`);
-  } else {
-    AD_FORM_ROOMS.setCustomValidity(``);
-  }
-  AD_FORM_ROOMS.reportValidity();
+  roomsGuestsHandler();
 });
