@@ -4,7 +4,6 @@
 (function () {
   window.main = {
     MAP: document.querySelector(`.map`),
-    AD_FORM: document.querySelector(`.ad-form`),
     PIN_SIZE: {
       X: 50,
       Y: 70
@@ -19,7 +18,7 @@
   const MAP_FILTERS = window.main.MAP_FILTERS_CONTAINER.querySelector(`.map__filters`);
   const AD_FORM = document.querySelector(`.ad-form`);
   const AD_FORM_FIELDSETS = AD_FORM.querySelectorAll(`fieldset`);
-  const AD_FORM_ADDRESS = window.main.AD_FORM.querySelector(`#address`);
+  const AD_FORM_ADDRESS = AD_FORM.querySelector(`#address`);
   let fieldWidth = window.main.MAP.offsetWidth;
   let mapPins = document.querySelector(`.map__pins`);
 
@@ -28,6 +27,7 @@
   for (let adFieldset of AD_FORM_FIELDSETS) {
     adFieldset.disabled = true;
   }
+
   MAP_FILTERS.disabled = true;
   AD_FORM_ADDRESS.value = `${fieldWidth / 2}, ${window.main.LOCATION_Y.MIN + (window.main.LOCATION_Y.MAX - window.main.LOCATION_Y.MIN) / 2}`;
 
@@ -60,5 +60,6 @@
       activatePage();
     }
   });
-})();
 
+  window.form.init(AD_FORM);
+})();
