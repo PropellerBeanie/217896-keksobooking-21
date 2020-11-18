@@ -5,6 +5,9 @@
 // form validation
 (function () {
   window.form = {
+    fillAdAddress(adFormAddress) {
+      adFormAddress.value = `${window.main.MAP_PIN_MAIN.offsetLeft + window.main.PIN_SIZE.X}, ${window.main.MAP_PIN_MAIN.offsetTop + window.main.PIN_SIZE.Y}`;
+    },
     init(adForm) {
       const AD_FORM_TYPE = adForm.querySelector(`#type`);
       const AD_FORM_PRICE = adForm.querySelector(`#price`);
